@@ -1,0 +1,448 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Delilah_Resto
+  description: >-
+    API para pedidos de comida deliciosa. Como cliente, podes registrarte, ver
+    el listado de nuestros productos y realizar una orden. Los administradores
+    del restaurante tienen la posibilidad de recibir pedidos y actualizarlos
+
+servers:
+  - description: Servidor local
+    url: http://localhost:3000
+    
+tags:
+  - name: usuario
+    description: "Descripcion de operaciones que puede realizar el usuario"
+    
+  - name: administrador
+    description: "Descripcion de operaciones que puede realizar un administrador"
+
+
+
+paths:
+  /registro:
+    post:
+      tags:
+        - usuario
+        - administrador
+      summary: Registrar nuevo usuario
+      operationId: createUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        description: Crear nuevo usuario
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          
+                
+        '400':
+          description: Invalid data supplied
+      
+  
+  /login:
+    post:
+      tags:
+        - usuario
+        - administrador
+      summary: Login usuario existente
+      operationId: loginUser
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/login'
+        description: Login para obtener token
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c3VhcmlvIjoiWW9saTA2Iiwicm9sIjoidXNlciIsImRpcmVjY2lvbiI6ImNpcG8gY2FzYSA2NiIsImlhdCI6MTYwNTcwOTQyM30.YndHLCCoJ2g5SqJNs2okalIsAbCkmKXNUMayO6VN4zM
+        '400':
+          description: Invalid username/password supplied
+          
+  /user/{id}:
+    put:
+      tags:
+      - usuario
+      - administrador
+      summary: "Actualizar usuario"
+      description: "This can only be done by the logged in user."
+      operationId: "updateUser"
+      parameters:
+        - name: "id"
+          in: "path"
+          description: "ID usuario a editar"
+          required: true
+          schema:
+            type: integer
+            description: ID del usuario
+            example: 5
+      responses:
+        '200':
+          description: successful operation
+        "400":
+          description: "Invalid user supplied"
+        "404":
+          description: "User not found"
+    delete:
+      tags:
+      - "administrador"
+      summary: "Eliminar usuario"
+      description: "This can only be done by the admin."
+      operationId: "deleteUser"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            description: ID del usuario a eliminar
+            example: 5
+      responses:
+        '200':
+          description: successful operation
+        "400":
+          description: "Invalid username supplied"
+        "404":
+          description: "User not found"
+    
+  /productos:
+    get:
+      tags:
+      - usuario
+      - administrador
+      summary: "Visualizar productos"
+      description: "This can only be done by the logged in user."
+      operationId: "visualizarProducto"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                example:  {
+        "nombre": "bondiola",
+        "descripcion": "",
+        "precio": 500,
+        "foto": "",
+        "codigo_interno": 9
+    }
+        '400':
+          description: Invalid username/password supplied
+  
+  /productos/{codigo_interno}:
+    get:
+      tags:
+      - usuario
+      - administrador
+      summary: "Visualizar solo un producto"
+      description: "This can only be done by the logged in user."
+      operationId: "verunproducto"
+      parameters:
+        - name: "codigo_interno"
+          in: "path"
+          description: "Codigo interno del producto que se queiere ver"
+          required: true
+          schema:
+            type: integer
+            description: Codigo interno del producto
+            example: 5
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                example: {
+              "id": 7,
+              "codigo_interno": 20,
+              "nombre": "camarones",
+              "descripcion": "",
+              "precio": 200,
+              "foto": "1",
+              "stock": 12,
+              "fechaCreado": "2020-10-20T23:51:07.000Z",
+              "fechaActualizado": "2020-11-08T22:19:20.000Z"
+          }
+        "404":
+          description: "ID not found"
+  /productos/{id}:        
+    delete:
+      tags:
+      - "administrador"
+      summary: "Eliminar un producto"
+      description: "This can only be done by the admin."
+      operationId: "deleteproduct"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            description: ID del producto a eliminar
+            example: 5
+      responses:
+        '200':
+          description: successful operation
+        "400":
+          description: "Invalid ID supplied"
+        "401":
+          description: "Unauthorized"
+          
+    put:
+      tags:
+      - "administrador"
+      summary: "Editar un producto"
+      description: "This can only be done by the admin."
+      operationId: "updateproduct"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            description: ID del producto a editar
+            example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+        description: Editar producto
+        required: true
+      responses:
+        '200':
+          description: successful operation
+        "400":
+          description: "Invalid ID supplied"
+        "401":
+          description: "Unauthorized"
+          
+  /productos/crear:
+    post:
+      tags:
+        - administrador
+      summary: Registrar nuevo usuario
+      operationId: createproduct
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/product'
+        description: Crear nuevo producto
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          
+        '400':
+          description: Invalid data supplied       
+          
+  /pedidos:
+    get:
+      tags:
+      - usuario
+      - administrador
+      summary: "Visualizar pedidos"
+      description: "This can only be done by the logged in user."
+      operationId: "visualizarPedido"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                example:  {
+        "id": 21,
+        "fechaCreado": "2020-11-11T19:11:05.000Z",
+        "fechaActualizado": null,
+        "estado": "nuevo",
+        "idProducto": 8,
+        "cantidad": 1,
+        "formadePago": "efectivo",
+        "usuario": "Milu_gar",
+        "direccion_de_envio": "Leopolodo Lugones"
+    }
+        '400':
+          description: Invalid username/password supplied
+  
+  /pedidos/carrito:
+    post:
+      tags:
+      - usuario
+      - administrador
+      summary: "Agregar producto a carrito"
+      description: "This can only be done by the logged in user."
+      operationId: "carrito"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/carrito'
+        description: Agregar producto a carrito
+        required: true
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                example: Agregaste el producto al carrito
+        '400':
+          description: Invalid data   
+          
+  /pedidos/enviar:
+    post:
+      tags:
+      - usuario
+      - administrador
+      summary: "Envia los pedidos que se agregaron al carrito"
+      description: "This can only be done by the logged in user."
+      operationId: "enviarPedido"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                example:  Se registró su pedido con éxito!
+                
+  /pedidos/seguir:
+    get:
+      tags:
+      - usuario
+      - administrador
+      summary: "Seguir pedidos"
+      description: "This can only be done by the logged in user."
+      operationId: "seguirPedido"
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                example:  {
+        "nombre": "canelones",
+        "precio": 421,
+        "estado": "finalizado",
+        "formadePago": "tarjeta",
+        "direccion_de_envio": "cipolletti",
+        "fechaCreado": "2020-11-03T22:06:07.000Z"
+    }
+        '400':
+          description: Invalid username/password supplied      
+          
+  /pedidos/{id}:        
+    put:
+      tags:
+      - "administrador"
+      summary: "Editar estado de un pedido"
+      description: "This can only be done by the admin."
+      operationId: "actualizarEstado"
+      parameters:
+        - name: "id"
+          in: "path"
+          required: true
+          schema:
+            type: integer
+            description: ID del pedido a editar
+            example: 5
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/estado'
+              
+        description: Editar estado de pedido
+        required: true
+      responses:
+        '200':
+          description: successful operation
+        "400":
+          description: "Invalid ID supplied"
+        "401":
+          description: "Unauthorized"        
+components:
+  schemas:
+    User:
+      type: "object"
+      properties:
+        usuario:
+          type: "string"
+        nombre:
+          type: "string"
+        apellido:
+          type: "string"
+        correo:
+          type: "string"
+        telefono:
+          type: "integer"
+        direccion_de_envio:
+          type: "string"
+        pass:
+          type: "string"
+      xml:
+        name: "User"
+    
+    login:
+      type: "object"
+      properties:
+        usuario:
+          type: "string"
+        pass:
+          type: "string"
+      xml:
+        name: "login"    
+        
+    product:
+      type: "object"
+      properties:
+        codigo_interno:
+          type: "string"
+        nombre:
+          type: "string"
+        precio:
+          type: "integer"
+        stock:
+          type: "integer"
+        foto:
+          type: "string"
+          
+    carrito:
+      type: "object"
+      properties:
+        idProducto:
+          type: "integer"
+        cantidad:
+          type: "integer"
+        formadePago:
+          type: "integer"
+      xml:
+        name: "carrito"
+        
+    estado:
+      type: "object"
+      properties:
+        estado:
+          type: "string"
+          example: nuevo, confirmado, preparando, enviando, entregando, cancelado, finalizado
+      xml:
+        name: "estado"
+        
+  securitySchemes:
+    bearerAuth:            # arbitrary name for the security scheme
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    # optional, arbitrary value for documentation purposes
+    
+security:
+  - bearerAuth: []         # use the same name as above
