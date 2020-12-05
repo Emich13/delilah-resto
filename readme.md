@@ -14,6 +14,12 @@ API for food orders
 index.js
 ---
 
+# Server
+run server using:
+protocol = http
+hostname = 127.0.0.1 //localhost
+port     = 3000
+
 # Install requirements
 # npm dependencies:
 npm dependencies declared in package.json file must be install to run the system
