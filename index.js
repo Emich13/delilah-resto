@@ -217,7 +217,7 @@ app.post('/pedidos/carrito', validarUsuario, agregaraCarrito) //Ver todos los pe
 app.post('/pedidos/enviar', validarUsuario, enviarPedido) // Registra pedido en la base
 app.put('/pedidos/:id', validarUsuario, esAdmin, modificarEstado) //Modificar estado (Admin)
 app.get('/pedidos/seguir', validarUsuario, seguirPedido) //Ver todos los pedidos realizados
-
+app.delete('/pedidos/:id', validarUsuario, esAdmin, eliminarPedido) //Eliminar un pedido (Admin)
 
 
 //Queries pedidos
@@ -312,6 +312,19 @@ async function seguirPedido(req, res) {
 
 }
 
+async function eliminarPedido(req, res) {
+    await sequelize.query('SELECT * FROM pedidos WHERE id = ?',
+        { replacements: [req.params.id], type: sequelize.QueryTypes.SELECT })
+        .then(function (resultado) {
+            if (resultado == "") {
+                res.status(400).send('ID no es valido');
+            } else {
+                sequelize.query('DELETE FROM pedidos WHERE id = ?',
+                    { replacements: [req.params.id] })
+                res.status(200).send('Pedido eliminado');
+            }
+        })
+}
 
 
 
